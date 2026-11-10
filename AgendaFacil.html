@@ -1,0 +1,915 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="utf-8">
+    <meta name="theme-color" content="#b0306f">
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+    <title>AgendaFácil – Agendamento do Salão</title>
+    
+    <!-- Fontes -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Charis+SIL:ital,wght@0,400;0,700;1,400;1,700&display=swap" rel="stylesheet">
+    <!-- Estilos (Cores e Layout) -->
+    <style>
+        :root {
+          /* Cores do Tema Claro (Chique, Neutro e Minimalista) */
+            --bg: #f8f9fa;    /* Cor de fundo: Branco gelo/off-white muito suave */
+            --sf: #ffffff;    /* Fundo dos cartões: Branco puro */
+            --ink: #111111;   /* Texto principal: Preto quase puro (muito elegante) */
+            --mu: #6c757d;    /* Texto secundário: Cinza sofisticado */
+            --ln: #e5e5e5;    /* Linhas e bordas: Cinza claro e discreto */
+            --ac: #212529;    /* COR DE DESTAQUE: Preto carvão/chumbo para botões e menus */
+            --aci: #ffffff;   /* Cor do texto sobre o destaque: Branco */
+            --so: #f1f3f5;    /* Fundo de botões secundários: Cinza bem clarinho */
+            
+            /* Cores de Status (Mantidas limpas e discretas) */
+            --ok: #2b8a3e;    /* Texto Sucesso (Verde sóbrio) */
+            --okb: #ebfbee;   /* Fundo Sucesso (Verde claro suave) */
+            --bad: #c92a2a;   /* Texto Cancelado (Vermelho sóbrio) */
+            --badb: #fff5f5;  /* Fundo Cancelado (Vermelho claro suave) */
+            --wa: #f53100;    /* Texto Agendado (Amarelo/Laranja elegante) */
+            --wab: #ffcfcf;   /* Fundo Agendado (Amarelo claro suave) */
+        }
+
+        /* Cores do Tema Escuro */
+        @media (prefers-color-scheme: dark) {
+            :root:not([data-theme=light]) {
+                --bg: #1b0f20;
+                --sf: #2a1830;
+                --ink: #f6e9f4;
+                --mu: #bda9c4;
+                --ln: #44304b;
+                --ac: #e86aa6;
+                --aci: #2a1830;
+                --so: #3d2444;
+                --ok: #7fd1a8;
+                --okb: #1f3b2f;
+                --bad: #f09a97;
+                --badb: #472221;
+                --wa: #f3cf86;
+                --wab: #44351a;
+            }
+        }
+
+        :root[data-theme=dark] {
+            --bg: #1b0f20;
+            --sf: #2a1830;
+            --ink: #f6e9f4;
+            --mu: #bda9c4;
+            --ln: #44304b;
+            --ac: #e86aa6;
+            --aci: #2a1830;
+            --so: #3d2444;
+            --ok: #7fd1a8;
+            --okb: #1f3b2f;
+            --bad: #f09a97;
+            --badb: #472221;
+            --wa: #f3cf86;
+            --wab: #44351a;
+        }
+
+        * { box-sizing: border-box; }
+        html, body { margin: 0; }
+        
+        body {
+        background: var(--bg);
+        color: var(--ink);
+        font: 400 16px/1.5 "Charis SIL", serif, system-ui, sans-serif;
+        min-height: 100vh;
+            }
+        
+
+        h1, h2, h3 {
+            font-family: "Charis SIL", serif;
+            margin: 0;
+            line-height: 1.15;
+        }
+
+        h2 { font-size: 26px; margin-bottom: 14px; }
+        h3 { font-size: 18px; margin-bottom: 8px; }
+        
+        :focus-visible { outline: 3px solid var(--ac); outline-offset: 2px; }
+        
+        body {
+            background: #e9f2fc; /* Fundo sólido e limpo */
+            color: var(--ink);
+            font: 400 16px/1.5 "Charis SIL", serif, system-ui, sans-serif;
+            min-height: 100vh;
+        }
+
+        .top {
+            background: var(--sf); /* Fundo sólido padrão dos cartões */
+            color: var(--ink);
+            border-bottom: 1px solid var(--ln);
+            position: sticky;
+            top: env(safe-area-inset-top, 0px);
+            z-index: 5;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05); /* Sombra suave nas caixas/topo */
+            padding-top: env(safe-area-inset-top, 0px);
+            padding-bottom: 0px;
+        }
+
+        /* Ajustes normais para o topo sólido */
+        .top .logo {
+            color: var(--ink);
+        }
+
+        .top .who {
+            color: var(--mu);
+        }
+
+        .top nav button {
+            color: var(--mu);
+        }
+
+        .top nav button.on {
+            background: var(--ac);
+            color: var(--aci);
+        }
+
+        .top .btn.g {
+            background: var(--so);
+            color: var(--ink);
+        }
+        
+        .in { max-width: 1000px; margin: 0 auto; padding: 0 18px; }
+        
+        .bar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 12px;
+            min-height: 56px;
+            flex-wrap: wrap;
+        }
+        
+        .logo { font: 800 21px 'Bricolage Grotesque', sans-serif; }
+        .who { font-size: 14px; color: var(--mu); }
+        
+        nav {
+    display: flex;
+    flex-wrap: nowrap;
+    gap: 2px;
+    overflow-x: auto;
+    scrollbar-width: none;
+    padding-bottom: 8px;
+}
+
+nav::-webkit-scrollbar { display: none; }
+
+nav button {
+    flex: 1 1 auto;
+    border: 0;
+    background: none;
+    color: var(--mu);
+    font: 600 clamp(9px, 1.25vw, 12.5px) Figtree, sans-serif;
+    padding: 8px clamp(4px, .8vw, 12px);
+    border-radius: 3px;
+    cursor: pointer;
+    white-space: nowrap;
+}
+        
+        nav button.on { background: var(--ac); color: var(--aci); }
+        
+        main { padding: 24px 0 60px; }
+        
+        .card {
+            background: var(--sf);
+            border: 1px solid var(--ln);
+            border-radius: 0px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.20
+            ); /* ADICIONE ESTA LINHA */
+            padding: 20px;
+            margin-bottom: 18px;
+        }
+        
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 12px;
+        }
+        
+        label {
+            display: block;
+            font-size: 13px;
+            font-weight: 600;
+            color: var(--mu);
+            margin-bottom: 3px;
+        }
+        
+        input, select {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid var(--ln);
+            border-radius: 0px;
+            background: var(--bg);
+            color: var(--ink);
+            font: inherit;
+        }
+        
+        .btn {
+            border: 0;
+            background: var(--ac);
+            color: var(--aci);
+            font: 600 15px Figtree, sans-serif;
+            padding: 10px 16px;
+            border-radius: 3px;
+            cursor: pointer;
+        }
+        
+        .btn.g { background: var(--so); color: var(--ink); }
+        .btn.r { background: var(--badb); color: var(--bad); }
+        .btn.s { padding: 6px 10px; font-size: 13px; }
+        .btn:disabled { opacity: .45; cursor: not-allowed; }
+        
+        .it {
+            display: grid;
+            grid-template-columns: 110px 1fr auto;
+            gap: 12px;
+            align-items: center;
+            padding: 12px 0;
+            border-bottom: 1px solid var(--ln);
+        }
+        .it:last-child { border: 0; }
+        .it small, .mu { color: var(--mu); }
+        
+        .acts {
+            display: flex;
+            gap: 6px;
+            flex-wrap: wrap;
+            grid-column: 1/-1;
+        }
+        
+        .pill {
+            font-size: 12px;
+            font-weight: 600;
+            padding: 3px 10px;
+            border-radius: 0px;
+            background: var(--so);
+        }
+        
+        .pill.Confirmado, .pill.Concluído { background: var(--okb); color: var(--ok); }
+        .pill.Cancelado, .pill.Não { background: var(--badb); color: var(--bad); }
+        .pill.Agendado { background: var(--wab); color: var(--wa); }
+        
+        .slots {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(70px, 1fr));
+            gap: 6px;
+            margin-top: 10px;
+        }
+        
+        .slot {
+            padding: 8px 0;
+            border: 1px solid var(--ln);
+            background: var(--bg);
+            color: var(--ink);
+            border-radius: 0px;
+            font: 600 14px Figtree, sans-serif;
+            cursor: pointer;
+        }
+        
+        .slot:hover:not(:disabled) { background: var(--ac); color: var(--aci); }
+        .slot:disabled { opacity: .35; text-decoration: line-through; cursor: not-allowed; }
+        
+        .chk { display: flex; gap: 8px; flex-wrap: wrap; }
+        .chk label {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            color: var(--ink);
+            font-size: 15px;
+            border: 1px solid var(--ln);
+            border-radius: 0px;
+            padding: 6px 12px;
+            margin: 0;
+            cursor: pointer;
+        }
+        .chk input { width: auto; }
+        
+        .al { padding: 12px 16px; border-radius: 0px; margin-bottom: 14px; font-weight: 500; }
+        .al.w { background: var(--wab); color: var(--wa); }
+        .al.e { background: var(--badb); color: var(--bad); }
+        .al.o { background: var(--okb); color: var(--ok); }
+        
+        .off {
+            background: var(--bad);
+            color: #fff;
+            text-align: center;
+            padding: 8px;
+            font-weight: 600;
+        }
+        
+        .bar2 {
+            height: 12px;
+            background: var(--so);
+            border-radius: 0px;
+            overflow: hidden;
+        }
+        .bar2 i { display: block; height: 100%; background: var(--ac); }
+        
+        .login { max-width: 440px; margin: 7vh auto; }
+        .login h1 { font-size: 38px; margin-bottom: 6px; }
+        
+        a { color: var(--ac); }
+        
+        @media(max-width: 600px) {
+            .it { grid-template-columns: 1fr auto; }
+            .it > b { grid-column: 1/-1; }
+        }
+    </style>
+</head>
+<body>
+
+<div id="app">
+    <noscript>Ative o JavaScript no navegador para usar o AgendaFácil.</noscript>
+</div>
+
+<!-- Scripts -->
+<script>
+    // Tratamento de Erros
+    window.onerror = function (m, u, l) {
+        var a = document.getElementById('app');
+        if (a && !a.children.length) {
+            a.innerHTML = '<div style="padding:20px;font:16px sans-serif"><b>Erro ao carregar:</b> ' + m + ' (linha ' + l + ')</div>';
+        }
+    }
+</script>
+
+<script>
+    // --- Configurações Básicas ---
+    const K = 'agendafacil_v1';
+    const OPEN = 540;   // 09:00 em minutos
+    const CLOSE = 1080; // 18:00 em minutos
+
+    // Funções de Utilitários (Datas e Horas)
+    const p2 = n => String(n).padStart(2, '0');
+    const ymd = d => d.getFullYear() + '-' + p2(d.getMonth() + 1) + '-' + p2(d.getDate());
+    const tm = m => p2(Math.floor(m / 60)) + ':' + p2(m % 60);
+    const mn = h => { const [a, b] = h.split(':'); return +a * 60 + +b; };
+    const esc = s => String(s == null ? '' : s).replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+    const uid = () => Math.random().toString(36).slice(2, 9);
+    const T = ymd(new Date());
+    const add = (d, n) => { const x = new Date(d + 'T12:00'); x.setDate(x.getDate() + n); return ymd(x); };
+    const nowMin = () => { const n = new Date(); return n.getHours() * 60 + n.getMinutes(); };
+    const fd = d => d.split('-').reverse().join('/');
+
+    // --- Dados Iniciais (Seed) ---
+    const seed = () => ({
+        cfg: { clean: 10, adv: 60, end: 'Rua do Retiro, 1000, Jundiaí - SP' },
+        users: [
+            { u: 'gestor', p: '123', r: 'gestor', n: 'Roger Pereira' },
+            { u: 'recepcao', p: '123', r: 'recep', n: 'Maria Lima' },
+            { u: 'ana', p: '123', r: 'prof', n: 'Ana Ribeiro', ref: 'p1' },
+            { u: 'juliana', p: '123', r: 'cli', n: 'Juliana Alves', ref: 'c1' }
+        ],
+        cli: [
+            { id: 'c1', n: 'Juliana Alves', tel: '(11) 99999-1111', end: 'Jundiaí - SP', em: 'juliana@email.com', t2: '' },
+            { id: 'c2', n: 'Paula Mendes', tel: '(11) 98888-2222', end: '', em: '', t2: '' }
+        ],
+        pros: [
+            { id: 'p1', n: 'Ana Ribeiro', esp: 'Corte, Escova', ls: 720, le: 780 },
+            { id: 'p2', n: 'Bruno Castro', esp: 'Coloração', ls: 720, le: 780 },
+            { id: 'p3', n: 'Carla Dias', esp: 'Hidratação, Escova', ls: 690, le: 750 }
+        ],
+        sv: [
+            { id: 's1', n: 'Corte', d: 45 },
+            { id: 's2', n: 'Escova', d: 40 },
+            { id: 's3', n: 'Coloração', d: 90 },
+            { id: 's4', n: 'Hidratação', d: 60 }
+        ],
+        ap: [
+            { id: uid(), c: 'c2', p: 'p1', sv: ['s1'], d: T, s: 600, e: 645, st: 'Confirmado' },
+            { id: uid(), c: 'c1', p: 'p3', sv: ['s4'], d: add(T, 1), s: 840, e: 900, st: 'Agendado' }
+        ],
+        bl: [], wl: [], msg: [], log: []
+    });
+
+    // Inicializa ou carrega o LocalStorage
+    let S = null;
+    try { S = JSON.parse(localStorage.getItem(K)) } catch (e) { }
+    if (!S) S = seed();
+
+    // Compatibilidade / Atualização de dados antigos
+    S.out = S.out || [];
+    S.pros.forEach(p => { if (p.ini == null) p.ini = 540; if (p.fim == null) p.fim = 1080; });
+    S.sv.forEach(x => { if (x.pr == null) x.pr = 0; x.reg = x.reg || ''; });
+    S.cli.forEach(c => { c.pref = c.pref || ''; c.ch = c.ch || 'WhatsApp'; });
+    S.ap.forEach(a => { a.r = a.r || {}; });
+
+    const save = () => { try { localStorage.setItem(K, JSON.stringify(S)) } catch (e) { } };
+
+    // --- Estado Global ---
+    let me = null;
+    let ST = { tab: '', d: T, mode: 'in', t: '', te: 0, hist: '', bk: { p: 'p1', sv: [], d: T, rep: 1, c: 'c1' }, del: 0 };
+
+    // Helpers de Nomes e Buscas
+    const cn = i => (S.cli.find(x => x.id === i) || { n: '(removido)' }).n;
+    const pn = i => (S.pros.find(x => x.id === i) || { n: '?' }).n;
+    const sn = ids => ids.map(i => (S.sv.find(x => x.id === i) || { n: '?' }).n).join(' + ');
+    const dur = ids => ids.reduce((t, i) => { const x = S.sv.find(y => y.id === i) || {}; return t + (x.d || 0) + (x.pr || 0); }, 0);
+    const lg = t => { S.log.unshift(me.n + ' ' + t + ' às ' + tm(nowMin()) + ' de ' + fd(T)); S.log = S.log.slice(0, 80); };
+    const hrs = a => (new Date(a.d + 'T' + tm(a.s)) - new Date()) / 36e5;
+    const isCli = () => me && me.r === 'cli';
+    const route = () => 'https://www.google.com/maps/dir/?api=1&destination=' + encodeURIComponent(S.cfg.end);
+
+    // --- Regras de Negócio (Disponibilidade) ---
+    function why(pid, d, s, du, skip) {
+        if (d < T) return 'Data passada';
+        if (d === T && s < nowMin() + (isCli() ? S.cfg.adv : 0)) return isCli() ? 'Mínimo de ' + S.cfg.adv + ' min de antecedência' : 'Horário passado';
+        if (new Date(d + 'T12:00').getDay() === 0) return 'Salão fechado aos domingos';
+        
+        const e = s + du;
+        const pr = S.pros.find(x => x.id === pid);
+        
+        if (s < pr.ini || e > pr.fim) return 'Fora da jornada do profissional';
+        if (s < pr.le && e > pr.ls) return 'Pausa do profissional';
+        if (S.bl.some(b => (b.p === '*' || b.p === pid) && blOn(b, d) && s < b.e && e > b.s)) return 'Horário bloqueado';
+        
+        const c = +S.cfg.clean;
+        if (S.ap.some(a => a.id !== skip && a.p === pid && a.d === d && a.st !== 'Cancelado' && s < a.e + c && e + c > a.s)) return 'Horário ocupado';
+        
+        return '';
+    }
+
+    function freed(a) {
+        S.wl = S.wl.filter(w => {
+            if (w.p !== a.p || w.d !== a.d) return true;
+            const du = dur(w.sv);
+            for (let s = OPEN; s + du <= CLOSE; s += 15) {
+                if (!why(w.p, w.d, s, du, '')) {
+                    S.msg.unshift({ c: w.c, t: 'Vaga liberada: ' + pn(w.p) + ' em ' + fd(w.d) + ' às ' + tm(s) + ' (' + sn(w.sv) + '). Agende agora!' });
+                    return false;
+                }
+            }
+            return true;
+        });
+    }
+
+    // --- Lógica de Ações e Eventos (A.) ---
+    const A = {};
+    A.go = (r) => { ST.tab = r; ST.t = ''; draw(); };
+
+    A.f = (e, k) => {
+        e.preventDefault();
+        const o = Object.fromEntries(new FormData(e.target));
+        ST.t = ''; ST.te = 0;
+        const er = m => { ST.t = m; ST.te = 1; draw(); return false; };
+
+        // Processa forms conforme o tipo (k)
+        if (k === 'login') {
+            const u = S.users.find(x => x.u.toLowerCase() === o.u.trim().toLowerCase() && x.p === o.p);
+            if (!u) return er('Usuário ou senha incorretos.');
+            me = u;
+            ST.tab = ({ cli: 'meus' }[u.r]) || 'agenda';
+            ST.bk.c = S.cli[0] ? S.cli[0].id : '';
+            if (u.r === 'cli') ST.bk.c = u.ref;
+            ST.bk.p = S.pros[0].id;
+            draw();
+            return false;
+        }
+
+        if (k === 'reg') {
+            if (S.users.some(x => x.u === o.u.trim())) return er('Esse usuário já existe. Escolha outro.');
+            const id = 'c' + uid();
+            S.cli.push({ id, n: o.n.trim(), tel: o.tel, end: o.end, em: o.em, t2: o.t2, pref: o.pref, ch: o.ch });
+            S.users.push({ u: o.u.trim(), p: o.p, r: 'cli', n: o.n.trim(), ref: id });
+            save();
+            ST.mode = 'in';
+            ST.t = 'Cadastro feito! Entre com seu usuário e senha.';
+            draw();
+            return false;
+        }
+
+        if (k === 'cli') {
+            const v = { n: o.n, tel: o.tel, end: o.end, em: o.em, t2: o.t2, pref: o.pref, ch: o.ch };
+            if (ST.ec) {
+                Object.assign(S.cli.find(x => x.id === ST.ec), v);
+                lg('alterou o cliente ' + o.n);
+                ST.ec = '';
+                ST.t = 'Cliente atualizado.';
+            } else {
+                S.cli.push(Object.assign({ id: 'c' + uid() }, v));
+                lg('cadastrou o cliente ' + o.n);
+                ST.t = 'Cliente cadastrado.';
+            }
+        }
+
+        if (k === 'eq') {
+            if (S.users.some(x => x.u === o.u.trim())) return er('Esse usuário já existe.');
+            const id = 'p' + uid();
+            S.users.push({ u: o.u.trim(), p: o.p, r: o.r, n: o.n, ref: o.r === 'prof' ? id : undefined });
+            if (o.r === 'prof') S.pros.push({ id, n: o.n, esp: o.esp, ls: 720, le: 780, ini: 540, fim: 1080 });
+            lg('cadastrou o funcionário ' + o.n);
+            ST.t = 'Funcionário cadastrado.';
+        }
+
+        if (k === 'sv') {
+            S.sv.push({ id: 's' + uid(), n: o.n, d: +o.d, pr: +o.pr || 0, reg: o.reg || '' });
+            lg('cadastrou o serviço ' + o.n);
+            ST.t = 'Serviço cadastrado.';
+        }
+
+        if (k === 'cfg') {
+            S.cfg = { clean: +o.clean, adv: +o.adv, end: o.end };
+            lg('alterou os ajustes');
+            ST.t = 'Ajustes salvos.';
+        }
+
+        if (k === 'bl') {
+            const s = mn(o.s), e = mn(o.e);
+            if (e <= s) return er('O fim deve ser depois do início.');
+            const x = S.ap.filter(a => a.st !== 'Cancelado' && a.d === o.d && (o.p === '*' || a.p === o.p) && a.s < e && a.e > s).length;
+            S.bl.push({ id: uid(), p: o.p, d: o.d, s, e, m: o.m, tp: o.tp, rec: o.rec });
+            lg('bloqueou a agenda em ' + fd(o.d) + ' (' + o.tp + ')');
+            ST.t = 'Período bloqueado.' + (x ? ' Atenção: já há ' + x + ' agendamento(s) nesse período; reagende-os.' : '');
+        }
+
+        save(); draw(); return false;
+    };
+
+    A.del = (k, id) => { S[k] = S[k].filter(x => x.id !== id); save(); draw(); };
+    A.pause = (id, f, v) => { const p = S.pros.find(x => x.id === id); p[f] = mn(v); save(); };
+    
+    A.st = (id, st) => {
+        const a = S.ap.find(x => x.id === id);
+        a.st = st;
+        lg('marcou ' + cn(a.c) + ' como ' + st);
+        if (st === 'Cancelado') freed(a);
+        save(); draw();
+    };
+
+    A.ccancel = id => {
+        const a = S.ap.find(x => x.id === id);
+        if (hrs(a) * 60 < S.cfg.adv) {
+            ST.t = 'Cancelamento só com ' + S.cfg.adv + ' min de antecedência. Ligue para o salão.';
+            ST.te = 1;
+            return draw();
+        }
+        A.st(id, 'Cancelado');
+    };
+
+    A.resch = id => {
+        const a = S.ap.find(x => x.id === id);
+        if (isCli() && hrs(a) * 60 < S.cfg.adv) {
+            ST.t = 'Reagendamento só com ' + S.cfg.adv + ' min de antecedência. Ligue para o salão.';
+            ST.te = 1;
+            return draw();
+        }
+        ST.bk = { p: a.p, sv: a.sv.slice(), d: a.d < T ? T : a.d, rep: 1, c: a.c, edit: id };
+        ST.tab = 'agendar'; ST.t = ''; draw();
+    };
+
+    A.bk = (k, v) => { ST.bk[k] = k === 'rep' ? +v : v; draw(); };
+    A.sv = (id, on) => { const b = ST.bk; b.sv = on ? b.sv.concat(id) : b.sv.filter(x => x !== id); draw(); };
+    A.noedit = () => { ST.bk = { p: S.pros[0].id, sv: [], d: T, rep: 1, c: isCli() ? me.ref : ST.bk.c }; draw(); };
+
+    A.go2 = s => {
+        const b = ST.bk, c = isCli() ? me.ref : b.c;
+        ST.te = 1;
+
+        if (!navigator.onLine) { ST.t = 'Sem conexão. Aguarde a internet voltar.'; return draw(); }
+        if (!c || !b.sv.length) { ST.t = 'Escolha o cliente e pelo menos um serviço.'; return draw(); }
+        
+        const du = dur(b.sv), c0 = S.ap.filter(a => a.c === c && a.st === 'Agendado' && a.d >= T && a.id !== b.edit).length;
+
+        if (b.edit) {
+            const a = S.ap.find(x => x.id === b.edit);
+            a.p = b.p; a.d = b.d; a.s = s; a.e = s + du;
+            a.sv = b.sv.slice(); a.st = 'Agendado'; a.r = {};
+            lg('reagendou ' + cn(c) + ' para ' + fd(b.d) + ' às ' + tm(s));
+            ST.t = 'Reagendado com sucesso.';
+            ST.te = 0; delete b.edit;
+            ST.tab = isCli() ? 'meus' : 'agenda';
+            ST.d = a.d; save(); return draw();
+        }
+
+        if (b.rep === 1 && c0 >= 3) {
+            ST.t = 'Este cliente já tem 3 agendamentos futuros não confirmados. Confirme algum antes de agendar outro.';
+            return draw();
+        }
+
+        let n = 0, sk = [];
+        for (let i = 0; i < b.rep; i++) {
+            const d = add(b.d, 7 * i);
+            if (why(b.p, d, s, du, '')) { sk.push(fd(d)); continue; }
+            S.ap.push({ id: uid(), c, p: b.p, sv: b.sv.slice(), d, s, e: s + du, st: b.rep > 1 ? 'Confirmado' : 'Agendado' });
+            n++;
+        }
+
+        if (!n) { ST.t = 'Nenhuma data disponível nesse horário.'; return draw(); }
+
+        lg('agendou ' + cn(c) + ' (' + sn(b.sv) + ') em ' + fd(b.d) + ' às ' + tm(s));
+        ST.te = 0;
+        ST.t = 'Agendado: ' + sn(b.sv) + ' com ' + pn(b.p) + ' às ' + tm(s) + (n > 1 ? ' (' + n + ' semanas)' : '') + '.' + (sk.length ? ' Sem vaga em: ' + sk.join(', ') + '.' : '');
+        ST.tab = isCli() ? 'meus' : 'agenda';
+        ST.d = b.d; save(); draw();
+    };
+
+    A.wl = () => {
+        const b = ST.bk, c = isCli() ? me.ref : b.c;
+        if (!b.sv.length) { ST.t = 'Escolha os serviços antes de entrar na fila.'; ST.te = 1; return draw(); }
+        S.wl.push({ id: uid(), c, p: b.p, d: b.d, sv: b.sv.slice() });
+        save();
+        ST.t = 'Você entrou na fila de espera. Avisaremos se uma vaga abrir.';
+        ST.te = 0; draw();
+    };
+
+    A.esp = (id, v) => { S.pros.find(x => x.id === id).esp = v; save(); };
+    A.hist = id => { ST.hist = ST.hist === id ? '' : id; draw(); };
+    A.out = () => { me = null; ST.tab = ''; ST.t = ''; draw(); };
+    A.date = v => { ST.d = v; draw(); };
+
+    A.delacc = () => {
+        if (!ST.del) { ST.del = 1; return draw(); }
+        const c = me.ref;
+        S.ap.filter(a => a.c === c && a.st !== 'Concluído').forEach(a => { a.st = 'Cancelado'; freed(a); });
+        S.ap = S.ap.filter(a => a.c !== c);
+        S.wl = S.wl.filter(w => w.c !== c);
+        S.cli = S.cli.filter(x => x.id !== c);
+        S.users = S.users.filter(x => x !== me);
+        S.msg = S.msg.filter(m => m.c !== c);
+        save();
+        ST.del = 0; me = null; ST.t = 'Sua conta e seus dados foram excluídos (LGPD).';
+        draw();
+    };
+
+    A.clr = () => { S.msg = S.msg.filter(m => m.c !== me.ref); save(); draw(); };
+
+    // --- Controle de Telas / Permissões ---
+    const TABS = {
+        gestor: [['agenda', 'Agenda'], ['agendar', 'Agendar'], ['cli', 'Clientes'], ['eq', 'Equipe'], ['sv', 'Serviços'], ['bl', 'Bloqueios'], ['wl', 'Fila de espera'], ['rel', 'Relatórios'], ['log', 'Registro']],
+        recep: [['agenda', 'Agenda'], ['agendar', 'Agendar'], ['cli', 'Clientes'], ['bl', 'Bloqueios'], ['wl', 'Fila de espera']],
+        prof: [['agenda', 'Minha agenda'], ['cli', 'Histórico de clientes']],
+        cli: [['meus', 'Meus horários'], ['agendar', 'Agendar'], ['conta', 'Minha conta']]
+    };
+
+    const RL = { gestor: 'Gestor', recep: 'Recepção', prof: 'Profissional', cli: 'Cliente' };
+    const fld = (l, n, t, x) => '<div><label>' + l + '</label><input name="' + n + '" type="' + (t || 'text') + '" ' + (x || '') + '></div>';
+    const msg = () => ST.t ? '<div class="al ' + (ST.te ? 'e' : 'o') + '" role="status">' + esc(ST.t) + '</div>' : '';
+
+    // --- Componentes de Interface Gráfica ---
+    function loginV() {
+        const reg = ST.mode === 'reg';
+        return '<div class="login in"><img src="logo_completa.png" alt="AgendaFácil" style="display:block;width:100%;max-width:340px;margin:0 auto 18px">' + msg() + '<div class="card">' + (reg ?
+            '<h3>Cadastro de cliente</h3><form onsubmit="return A.f(event,\'reg\')" class="grid" style="grid-template-columns:1fr">' + fld('Usuário', 'u', 'text', 'required') + fld('Senha', 'p', 'password', 'required minlength=3') + fld('Nome completo', 'n', 'text', 'required') + fld('Telefone', 'tel', 'tel', 'required') + fld('E-mail', 'em', 'email') + fld('Endereço', 'end') + fld('Segundo contato', 't2') + fld('Preferências de atendimento', 'pref') + chSel('WhatsApp') + '<button class="btn">Criar conta</button></form><p><a href="#" onclick="ST.mode=\'in\';ST.t=\'\';draw();return false">Já tenho conta</a></p>' :
+            '<h3>Entrar</h3><form onsubmit="return A.f(event,\'login\')" class="grid" style="grid-template-columns:1fr">' + fld('Usuário', 'u', 'text', 'required autocomplete=username autocapitalize=none autocorrect=off spellcheck=false') + fld('Senha', 'p', 'password', 'required') + '<button class="btn">Entrar</button></form><p><a href="#" onclick="ST.mode=\'reg\';ST.t=\'\';draw();return false">Criar conta de cliente</a></p>') + '</div>' +
+            '<p><a target="_blank" rel="noopener" href="' + route() + '">Como chegar ao salão</a> · <a href="#" onclick="A.inst();return false">Instalar app Android</a></p><p class="mu" style="font-size:14px">Contas de teste (senha 123): gestor, recepcao, ana (profissional), juliana (cliente).</p></div>';
+    }
+
+    function row(a, staff) {
+        const late = a.d === T && (a.st === 'Agendado' || a.st === 'Confirmado') && nowMin() > a.s + 15;
+        const live = a.st === 'Agendado' || a.st === 'Confirmado';
+        let b = '';
+        if (staff && live) {
+            if (a.st === 'Agendado') b += '<button class="btn s g" onclick="A.st(\'' + a.id + '\',\'Confirmado\')">Confirmar</button>';
+            b += '<button class="btn s g" onclick="A.st(\'' + a.id + '\',\'Concluído\')">Concluir</button><button class="btn s g" onclick="A.st(\'' + a.id + '\',\'Não compareceu\')">Não compareceu</button>';
+            if (me.r !== 'prof') b += '<button class="btn s g" onclick="A.resch(\'' + a.id + '\')">Reagendar</button><button class="btn s r" onclick="A.st(\'' + a.id + '\',\'Cancelado\')">Cancelar</button>';
+        }
+        return '<div class="it"><b>' + tm(a.s) + '–' + tm(a.e) + '</b><div>' + esc(cn(a.c)) + ' · ' + esc(sn(a.sv)) + '<br><small>' + esc(pn(a.p)) + (late ? ' · Atraso acima de 15 min: sugerido marcar “Não compareceu”' : '') + '</small></div><span class="pill ' + a.st.split(' ')[0] + '">' + a.st + '</span>' + (b ? '<div class="acts">' + b + '</div>' : '') + '</div>';
+    }
+
+    function gd(d, ids) {
+        return ids.map(id => {
+            const p = S.pros.find(x => x.id === id);
+            if (!p) return '';
+            const L = [];
+            
+            S.ap.filter(a => a.d === d && a.p === id && a.st !== 'Cancelado').forEach(a => {
+                L.push({ s: a.s, a });
+                L.push({ s: a.e, e: a.e + +S.cfg.clean, k: 'Higienização' });
+            });
+            
+            L.push({ s: p.ls, e: p.le, k: 'Pausa' });
+            
+            S.bl.filter(b => (b.p === '*' || b.p === id) && blOn(b, d)).forEach(b => L.push({ s: b.s, e: b.e, k: 'Bloqueio: ' + (b.tp || b.m || '') }));
+            
+            L.sort((x, y) => x.s - y.s);
+            
+            return '<h3>' + esc(p.n) + '</h3><p class="mu" style="margin:0 0 6px">Jornada ' + tm(p.ini) + '–' + tm(p.fim) + '</p>' + (L.some(x => x.a) ? '' : '<p class="mu">Sem atendimentos.</p>') + L.map(x => x.a ? row(x.a, true) : '<div class="it" style="grid-template-columns:110px 1fr;background:var(--so);padding:6px 10px;border-radius:8px;margin:4px 0"><b>' + tm(x.s) + '–' + tm(x.e) + '</b><span class="mu">' + esc(x.k) + '</span></div>').join('');
+        }).join('');
+    }
+
+    // --- Views Específicas ---
+    function vAgenda() {
+        const d = ST.d, pr = me.r === 'prof', w = ST.vm === 'w', ids = pr ? [me.ref] : (ST.pf ? [ST.pf] : S.pros.map(p => p.id));
+        const al = pr ? [] : S.ap.filter(a => a.st === 'Agendado' && hrs(a) >= 0 && hrs(a) <= 24);
+        let days = [d];
+        
+        if (w) {
+            const x = new Date(d + 'T12:00');
+            x.setDate(x.getDate() - (x.getDay() + 6) % 7);
+            const m = ymd(x);
+            days = [0, 1, 2, 3, 4, 5].map(i => add(m, i));
+        }
+        
+        const DN = ['Dom', 'Seg', 'Ter', 'Qua', 'Qui', 'Sex', 'Sáb'];
+        
+        return '<h2>' + (pr ? 'Minha agenda' : 'Agenda') + '</h2>' + msg() +
+            (al.length ? '<div class="al w"><b>Alerta de confirmação:</b> ' + al.map(a => esc(cn(a.c)) + ' (' + fd(a.d) + ' ' + tm(a.s) + ')').join(', ') + ' ainda não confirmou.</div>' : '') +
+            '<div class="card"><div class="grid"><div><label>Data</label><input type="date" value="' + d + '" onchange="A.date(this.value)"></div><div><label>Visão</label><select onchange="ST.vm=this.value;draw()"><option value="d">Diária</option><option value="w"' + (w ? ' selected' : '') + '>Semanal</option></select></div>' +
+            (pr ? '' : '<div><label>Profissional</label><select onchange="ST.pf=this.value;draw()"><option value="">Todos</option>' + S.pros.map(p => '<option value="' + p.id + '"' + (p.id === ST.pf ? ' selected' : '') + '>' + esc(p.n) + '</option>').join('') + '</select></div>') + '</div></div>' +
+            days.map(x => '<div class="card"><h3>' + DN[new Date(x + 'T12:00').getDay()] + ' ' + fd(x) + '</h3>' + gd(x, ids) + '</div>').join('');
+    }
+
+    function vAg() {
+        const b = ST.bk, du = dur(b.sv), c = isCli() ? me.ref : b.c;
+        let sl = '';
+        if (du) {
+            for (let s = OPEN; s + du <= CLOSE; s += 15) {
+                const r = why(b.p, b.d, s, du, b.edit);
+                sl += '<button class="slot" ' + ((r || !navigator.onLine) ? 'disabled title="' + r + '"' : '') + ' onclick="A.go2(' + s + ')">' + tm(s) + '</button>';
+            }
+        }
+        
+        return '<h2>' + (b.edit ? 'Reagendar atendimento' : 'Novo agendamento') + '</h2>' + msg() + (b.edit ? '<div class="al w">Escolha o novo horário. <a href="#" onclick="A.noedit();return false">Cancelar reagendamento</a></div>' : '') +
+            '<div class="card"><div class="grid">' + (isCli() ? '' : '<div><label>Cliente</label><select onchange="A.bk(\'c\',this.value)">' + S.cli.map(x => '<option value="' + x.id + '"' + (x.id === b.c ? ' selected' : '') + '>' + esc(x.n) + '</option>').join('') + '</select></div>') +
+            '<div><label>Profissional</label><select onchange="A.bk(\'p\',this.value)">' + S.pros.map(x => '<option value="' + x.id + '"' + (x.id === b.p ? ' selected' : '') + '>' + esc(x.n) + ' – ' + esc(x.esp) + '</option>').join('') + '</select></div>' +
+            '<div><label>Data</label><input type="date" min="' + T + '" value="' + b.d + '" onchange="A.bk(\'d\',this.value)"></div>' +
+            (b.edit ? '' : '<div><label>Repetir semanalmente (semanas)</label><input type="number" min="1" max="8" value="' + b.rep + '" onchange="A.bk(\'rep\',this.value)"></div>') + '</div>' +
+            '<label style="margin-top:14px">Serviços (pode escolher vários)</label><div class="chk">' + S.sv.map(x => '<label><input type="checkbox" ' + (b.sv.includes(x.id) ? 'checked' : '') + ' onchange="A.sv(\'' + x.id + '\',this.checked)">' + esc(x.n) + ' · ' + x.d + ' min</label>').join('') + '</div>' +
+            '<p class="mu">' + (du ? 'Duração total: ' + du + ' min (mais ' + S.cfg.clean + ' min de limpeza).' : 'Escolha os serviços para ver os horários.') + '</p>' +
+            (navigator.onLine ? '' : '<div class="al e">Modo offline: o agendamento fica desativado até a internet voltar.</div>') +
+            (du ? '<label>Horários</label><div class="slots">' + sl + '</div><p style="margin-top:14px"><button class="btn g" onclick="A.wl()">Entrar na fila de espera para esta data</button></p>' : '') + '</div>';
+    }
+
+    function vMeus() {
+        const c = me.ref, L = S.ap.filter(a => a.c === c).sort((a, b) => (b.d + tm(b.s)).localeCompare(a.d + tm(a.s))), M = S.msg.filter(m => m.c === c);
+        const rem = L.filter(a => a.st === 'Agendado' && hrs(a) >= 0 && hrs(a) <= 24);
+        
+        return '<h2>Meus horários</h2>' + msg() + rem.map(a => '<div class="al w">Lembrete: ' + esc(sn(a.sv)) + ' com ' + esc(pn(a.p)) + ' em ' + fd(a.d) + ' às ' + tm(a.s) + '. <button class="btn s" onclick="A.st(\'' + a.id + '\',\'Confirmado\')">Confirmar presença</button> <button class="btn s r" onclick="A.ccancel(\'' + a.id + '\')">Cancelar</button></div>').join('') +
+            (M.length ? '<div class="al o">' + M.map(m => esc(m.t)).join('<br>') + ' <button class="btn s g" onclick="A.clr()">Dispensar</button></div>' : '') +
+            '<div class="card">' + (L.length ? L.map(a => {
+                const live = a.st === 'Agendado' || a.st === 'Confirmado';
+                return '<div class="it"><b>' + fd(a.d) + '<br>' + tm(a.s) + '</b><div>' + esc(sn(a.sv)) + '<br><small>' + esc(pn(a.p)) + '</small></div><span class="pill ' + a.st.split(' ')[0] + '">' + a.st + '</span>' + (live && a.d >= T ? '<div class="acts"><a class="btn s g" style="text-decoration:none" target="_blank" rel="noopener" href="' + route() + '">Como chegar</a><button class="btn s g" onclick="A.resch(\'' + a.id + '\')">Reagendar</button><button class="btn s r" onclick="A.ccancel(\'' + a.id + '\')">Cancelar</button></div>' : '') + '</div>';
+            }).join('') : '<p class="mu">Você ainda não tem agendamentos. Vá em “Agendar”.</p>') + '</div>';
+    }
+
+    const chSel = v => '<div><label>Canal de lembrete</label><select name="ch">' + ['WhatsApp', 'SMS', 'E-mail'].map(x => '<option' + (x === v ? ' selected' : '') + '>' + x + '</option>').join('') + '</select></div>';
+    
+    A.ec = id => { ST.ec = id; ST.t = ''; draw(); scrollTo(0, 0); };
+    
+    function vCli() {
+        const ed = me.r !== 'prof', E = S.cli.find(x => x.id === ST.ec) || {}, v = k => 'value="' + esc(E[k] || '') + '"';
+        
+        return '<h2>Clientes</h2>' + msg() + (ed ? '<div class="card"><h3>' + (E.id ? 'Alterar cliente' : 'Novo cliente') + '</h3><form onsubmit="return A.f(event,\'cli\')"><div class="grid">' + fld('Nome', 'n', 'text', 'required ' + v('n')) + fld('Telefone', 'tel', 'tel', 'required ' + v('tel')) + fld('E-mail', 'em', 'email', v('em')) + fld('Endereço', 'end', 'text', v('end')) + fld('Segundo contato', 't2', 'text', v('t2')) + fld('Preferências de atendimento', 'pref', 'text', v('pref')) + chSel(E.ch) + '</div><p><button class="btn">' + (E.id ? 'Salvar alterações' : 'Cadastrar') + '</button>' + (E.id ? ' <button type="button" class="btn g" onclick="A.ec(\'\')">Cancelar</button>' : '') + '</p></form></div>' : '') +
+            '<div class="card">' + S.cli.map(x => {
+                const h = S.ap.filter(a => a.c === x.id && a.st === 'Concluído').sort((a, b) => b.d.localeCompare(a.d));
+                return '<div class="it"><div><b>' + esc(x.n) + '</b><br><small>' + esc(x.tel) + (x.em ? ' · ' + esc(x.em) : '') + '</small></div><span class="mu">' + h.length + ' atendimentos</span><div class="acts" style="grid-column:auto"><button class="btn s g" onclick="A.hist(\'' + x.id + '\')">Histórico</button>' + (ed ? '<button class="btn s g" onclick="A.ec(\'' + x.id + '\')">Editar</button>' : '') + '</div>' +
+                    (ST.hist === x.id ? '<div style="grid-column:1/-1"><div class="mu">Endereço: ' + esc(x.end || '—') + ' · 2º contato: ' + esc(x.t2 || '—') + ' · Canal: ' + esc(x.ch) + '</div><div class="mu">Preferências: ' + esc(x.pref || '—') + '</div>' + (h.length ? h.map(a => '<div>' + fd(a.d) + ' · ' + esc(sn(a.sv)) + ' · ' + esc(pn(a.p)) + '</div>').join('') : '<span class="mu">Sem serviços concluídos.</span>') + '</div>' : '') + '</div>';
+            }).join('') + '</div>';
+    }
+
+    function vEq() {
+        const tin = (p, f, l) => '<div><label>' + l + '</label><input type="time" value="' + tm(p[f]) + '" onchange="A.pause(\'' + p.id + '\',\'' + f + '\',this.value)"></div>';
+        
+        return '<h2>Equipe</h2>' + msg() + '<div class="card"><h3>Cadastrar funcionário</h3><form onsubmit="return A.f(event,\'eq\')"><div class="grid">' + fld('Usuário', 'u', 'text', 'required') + fld('Senha', 'p', 'password', 'required') + fld('Nome completo', 'n', 'text', 'required') + '<div><label>Perfil</label><select name="r"><option value="prof">Profissional</option><option value="recep">Recepcionista</option></select></div>' + fld('Especialidades (profissionais)', 'esp') + '</div><p><button class="btn">Cadastrar</button></p></form></div>' +
+            '<div class="card"><h3>Profissionais: especialidades, jornada e pausa obrigatória</h3>' + S.pros.map(p => '<div class="it" style="grid-template-columns:1fr"><b>' + esc(p.n) + '</b><div class="grid"><div><label>Especialidades</label><input value="' + esc(p.esp) + '" onchange="A.esp(\'' + p.id + '\',this.value)"></div>' + tin(p, 'ini', 'Jornada: início') + tin(p, 'fim', 'Jornada: fim') + tin(p, 'ls', 'Pausa: início') + tin(p, 'le', 'Pausa: fim') + '</div></div>').join('') + '</div>';
+    }
+
+    function vSv() {
+        const c = S.cfg;
+        return '<h2>Serviços</h2>' + msg() + '<div class="card"><h3>Novo serviço</h3><form onsubmit="return A.f(event,\'sv\')"><div class="grid">' + fld('Nome', 'n', 'text', 'required') + fld('Duração (min)', 'd', 'number', 'required min=10 step=5') + fld('Preparo de sala (min)', 'pr', 'number', 'min=0 step=5 value=0') + fld('Regras específicas', 'reg') + '</div><p><button class="btn">Cadastrar</button></p></form></div><div class="card">' + S.sv.map(x => '<div class="it" style="grid-template-columns:1fr auto auto"><div><b>' + esc(x.n) + '</b><br><small>' + (x.pr ? 'Preparo de sala: ' + x.pr + ' min · ' : '') + esc(x.reg || 'sem regras específicas') + '</small></div><span>' + x.d + ' min</span>' + (S.ap.some(a => a.sv.includes(x.id)) ? '' : '<button class="btn s r" onclick="A.del(\'sv\',\'' + x.id + '\')">Remover</button>') + '</div>').join('') + '</div>' +
+            '<div class="card"><h3>Ajustes do sistema</h3><form onsubmit="return A.f(event,\'cfg\')"><div class="grid">' + fld('Intervalo de limpeza (min)', 'clean', 'number', 'required min=0 value=' + c.clean) + fld('Antecedência mínima do cliente (min)', 'adv', 'number', 'required min=0 value=' + c.adv) + fld('Endereço do salão', 'end', 'text', 'required value="' + esc(c.end) + '"') + '</div><p><button class="btn">Salvar</button></p></form></div>';
+    }
+
+    function vBl() {
+        const rc = { d: 'todos os dias', w: 'toda semana' };
+        return '<h2>Bloqueios de agenda</h2>' + msg() + '<div class="card"><form onsubmit="return A.f(event,\'bl\')"><div class="grid"><div><label>Profissional</label><select name="p"><option value="*">Todos</option>' + S.pros.map(p => '<option value="' + p.id + '">' + esc(p.n) + '</option>').join('') + '</select></div><div><label>Tipo</label><select name="tp"><option>Folga</option><option>Manutenção de equipamento</option><option>Almoço fixo</option><option>Outro</option></select></div><div><label>Repetição</label><select name="rec"><option value="">Não repete</option><option value="d">Todos os dias</option><option value="w">Toda semana</option></select></div>' + fld('Data (início)', 'd', 'date', 'required min=' + T) + fld('Início', 's', 'time', 'required value=09:00') + fld('Fim', 'e', 'time', 'required value=18:00') + fld('Observação', 'm') + '</div><p><button class="btn">Bloquear</button></p></form></div><div class="card">' + (S.bl.length ? S.bl.map(b => '<div class="it" style="grid-template-columns:1fr auto"><div><b>' + fd(b.d) + ' ' + tm(b.s) + '–' + tm(b.e) + (b.rec ? ' · ' + rc[b.rec] : '') + '</b><br><small>' + (b.p === '*' ? 'Todos' : esc(pn(b.p))) + ' · ' + esc(b.tp || '') + ' ' + esc(b.m || '') + '</small></div><button class="btn s r" onclick="A.del(\'bl\',\'' + b.id + '\')">Remover</button></div>').join('') : '<p class="mu">Nenhum bloqueio.</p>') + '</div>';
+    }
+
+    function vWl() {
+        return '<h2>Fila de espera</h2><div class="card">' + (S.wl.length ? S.wl.map(w => '<div class="it" style="grid-template-columns:1fr auto"><div><b>' + esc(cn(w.c)) + '</b><br><small>' + esc(pn(w.p)) + ' · ' + fd(w.d) + ' · ' + esc(sn(w.sv)) + '</small></div><button class="btn s r" onclick="A.del(\'wl\',\'' + w.id + '\')">Remover</button></div>').join('') : '<p class="mu">Ninguém na fila. Ao cancelar um horário, quem espera é avisada.</p>') + '</div>';
+    }
+
+    A.csv = () => {
+        const r = ['Data;Início;Cliente;Profissional;Serviços;Situação'].concat(S.ap.filter(a => a.d >= (ST.r1 || T) && a.d <= (ST.r2 || add(T, 6))).map(a => [fd(a.d), tm(a.s), cn(a.c), pn(a.p), sn(a.sv), a.st].join(';')));
+        const l = document.createElement('a');
+        l.href = URL.createObjectURL(new Blob(['\ufeff' + r.join('\n')], { type: 'text/csv' }));
+        l.download = 'relatorio.csv';
+        l.click();
+    };
+
+    function vRel() {
+        const a1 = ST.r1 || T, a2 = ST.r2 || add(T, 6), P = S.ap.filter(a => a.d >= a1 && a.d <= a2);
+        const ok = P.filter(a => a.st !== 'Cancelado'), nc = P.filter(a => a.st === 'Não compareceu').length, cc = P.length - ok.length, cnt = {}, t = P.length || 1;
+        
+        ok.forEach(a => a.sv.forEach(i => { const n = sn([i]); cnt[n] = (cnt[n] || 0) + 1; }));
+        const mx = Math.max(1, ...Object.values(cnt));
+        
+        const days = [];
+        for (let d = a1; d <= a2 && days.length < 62; d = add(d, 1)) if (new Date(d + 'T12:00').getDay() !== 0) days.push(d);
+        
+        const oc = S.pros.map(p => {
+            const cap = days.length * (p.fim - p.ini - (p.le - p.ls)), u = ok.filter(a => a.p === p.id).reduce((s, a) => s + a.e - a.s, 0);
+            return [p.n, cap > 0 ? Math.min(100, Math.round(100 * u / cap)) : 0];
+        });
+        
+        return '<h2>Relatórios operacionais</h2><div class="card"><div class="grid"><div><label>De</label><input type="date" value="' + a1 + '" onchange="ST.r1=this.value;draw()"></div><div><label>Até</label><input type="date" value="' + a2 + '" onchange="ST.r2=this.value;draw()"></div></div><p><button class="btn g" onclick="A.csv()">Exportar CSV</button></p></div>' +
+            '<div class="grid"><div class="card"><h3>' + ok.length + '</h3><span class="mu">atendimentos no período</span></div><div class="card"><h3>' + Math.round(100 * cc / t) + '%</h3><span class="mu">cancelamentos</span></div><div class="card"><h3>' + Math.round(100 * nc / t) + '%</h3><span class="mu">índice de no-show</span></div></div>' +
+            '<div class="card"><h3>Serviços mais demandados</h3>' + (Object.entries(cnt).sort((a, b) => b[1] - a[1]).map(([n, v]) => '<p>' + esc(n) + ' · ' + v + '<div class="bar2"><i style="width:' + 100 * v / mx + '%"></i></div></p>').join('') || '<p class="mu">Sem dados.</p>') + '</div>' +
+            '<div class="card"><h3>Taxa de ocupação da agenda</h3>' + oc.map(([n, v]) => '<p>' + esc(n) + ' · ' + v + '%<div class="bar2"><i style="width:' + v + '%"></i></div></p>').join('') + '</div>';
+    }
+
+    function vConta() {
+        const x = S.cli.find(c => c.id === me.ref) || {};
+        return '<h2>Minha conta</h2>' + msg() + '<div class="card"><p><b>' + esc(x.n) + '</b><br>' + esc(x.tel) + (x.em ? '<br>' + esc(x.em) : '') + (x.end ? '<br>' + esc(x.end) : '') + '</p><p><a target="_blank" rel="noopener" href="' + route() + '">Como chegar ao salão (da sua localização atual)</a><br><small class="mu">' + esc(S.cfg.end) + '</small></p></div><div class="card"><h3>Excluir minha conta</h3><p class="mu">Seus dados pessoais e agendamentos serão apagados (LGPD).</p><button class="btn r" onclick="A.delacc()">' + (ST.del ? 'Confirmar exclusão definitiva' : 'Excluir minha conta') + '</button></div>';
+    }
+
+    const vLog = () => '<h2>Registro de alterações</h2><div class="card">' + (S.log.length ? S.log.map(l => '<div class="it" style="grid-template-columns:1fr">' + esc(l) + '</div>').join('') : '<p class="mu">Nada registrado ainda.</p>') + '</div>';
+    
+    const blOn = (b, d) => b.d === d || (d > b.d && (b.rec === 'd' || (b.rec === 'w' && new Date(d + 'T12:00').getDay() === new Date(b.d + 'T12:00').getDay())));
+    
+    // Atualização dos Tabs
+    TABS.gestor.splice(2, 0, ['hor', 'Horários']); TABS.gestor.push(['lem', 'Lembretes']); TABS.gestor = TABS.gestor.filter(t => t[0] !== 'x');
+    TABS.recep = [['agenda', 'Agenda'], ['agendar', 'Agendar'], ['hor', 'Horários'], ['cli', 'Clientes'], ['wl', 'Fila de espera'], ['lem', 'Lembretes']];
+    TABS.prof.push(['hor', 'Horários']);
+    TABS.cli.splice(2, 0, ['hor', 'Horários']);
+
+    // --- Sistema de Lembretes Automáticos ---
+    function rem() {
+        let c = 0;
+        S.ap.forEach(a => {
+            if (a.st !== 'Agendado' && a.st !== 'Confirmado') return;
+            a.r = a.r || {};
+            const h = hrs(a);
+            [[24, '24h'], [2, '2h']].forEach(([n, k]) => {
+                if (h > 0 && h <= n && !a.r[k]) {
+                    a.r[k] = 1;
+                    const q = S.cli.find(x => x.id === a.c) || {};
+                    S.out.unshift({ a: a.id, c: a.c, ch: q.ch || 'WhatsApp', k, t: 'Lembrete de ' + k + ': ' + sn(a.sv) + ' com ' + pn(a.p) + ' em ' + fd(a.d) + ' às ' + tm(a.s) + '. Confirme sua presença.' });
+                    c = 1;
+                }
+            });
+        });
+        if (c) { S.out = S.out.slice(0, 100); save(); }
+    }
+    
+    setInterval(() => { if (me) rem() }, 6e4);
+
+    function vLem() {
+        return '<h2>Lembretes automáticos</h2><p class="mu">Enviados 24h e 2h antes do horário, por WhatsApp, SMS ou e-mail (simulação), com botões de confirmação.</p>' + msg() + '<div class="card">' + (S.out.length ? S.out.map(m => {
+            const a = S.ap.find(x => x.id === m.a);
+            return '<div class="it" style="grid-template-columns:1fr"><div><b>' + esc(m.ch) + ' · ' + m.k + ' · ' + esc(cn(m.c)) + '</b><br><small>' + esc(m.t) + '</small></div>' + (a && a.st === 'Agendado' ? '<div class="acts"><button class="btn s g" onclick="A.st(\'' + a.id + '\',\'Confirmado\')">Confirmar</button><button class="btn s r" onclick="A.st(\'' + a.id + '\',\'Cancelado\')">Cancelar</button></div>' : a ? '<span class="pill ' + a.st.split(' ')[0] + '">' + a.st + '</span>' : '') + '</div>';
+        }).join('') : '<p class="mu">Nenhum lembrete enviado ainda.</p>') + '</div>';
+    }
+
+    A.pick = (p, d) => { ST.bk.p = p; ST.bk.d = d; ST.bk.sv = ST.hs ? [ST.hs] : []; ST.tab = 'agendar'; ST.t = ''; draw(); };
+
+    function vHor() {
+        const d = ST.hd || T, du = ST.hs ? dur([ST.hs]) : 30;
+        return '<h2>Consultar horários</h2><div class="card"><div class="grid"><div><label>Data</label><input type="date" min="' + T + '" value="' + d + '" onchange="ST.hd=this.value;draw()"></div><div><label>Serviço</label><select onchange="ST.hs=this.value;draw()"><option value="">Qualquer (30 min)</option>' + S.sv.map(x => '<option value="' + x.id + '"' + (x.id === ST.hs ? ' selected' : '') + '>' + esc(x.n) + '</option>').join('') + '</select></div></div></div>' +
+            S.pros.map(p => {
+                let f = '';
+                for (let s = OPEN; s + du <= CLOSE; s += 15) if (!why(p.id, d, s, du, '')) f += '<button class="slot" onclick="A.pick(\'' + p.id + '\',\'' + d + '\',' + s + ')">' + tm(s) + '</button>';
+                return '<div class="card"><h3>' + esc(p.n) + '</h3><span class="mu">' + esc(p.esp) + '</span><div class="slots">' + (f || '<span class="mu">Sem horários livres.</span>') + '</div></div>';
+            }).join('');
+    }
+
+    // --- Instalação PWA ---
+    let DP = null;
+    addEventListener('beforeinstallprompt', e => { e.preventDefault(); DP = e; });
+    A.inst = () => { if (DP) DP.prompt(); else alert('No Android (Chrome): toque no menu ⋮ e escolha “Instalar app” ou “Adicionar à tela inicial”.'); };
+
+    try {
+        const m = {
+            name: 'AgendaFácil',
+            short_name: 'AgendaFácil',
+            display: 'standalone',
+            background_color: '#f6f1f7',
+            theme_color: '#b0306f',
+            icons: [{ src: 'data:image/svg+xml,' + encodeURIComponent('<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 96 96"><rect width="96" height="96" rx="20" fill="#b0306f"/><text x="48" y="66" font-size="56" text-anchor="middle" fill="#fff" font-family="sans-serif">A</text></svg>'), sizes: 'any', type: 'image/svg+xml' }]
+        };
+        const l = document.createElement('link');
+        l.rel = 'manifest';
+        l.href = 'data:application/manifest+json,' + encodeURIComponent(JSON.stringify(m));
+        document.head.appendChild(l);
+    } catch (e) { }
+
+    // --- Renderização Principal (Draw) ---
+    const V = { hor: vHor, lem: vLem, agenda: vAgenda, agendar: vAg, cli: vCli, eq: vEq, sv: vSv, bl: vBl, wl: vWl, rel: vRel, log: vLog, meus: vMeus, conta: vConta };
+
+    function draw() {
+        const a = document.getElementById('app');
+        if (!me) { a.innerHTML = loginV(); return; }
+        
+        rem();
+        const tabs = TABS[me.r];
+        if (!tabs.some(t => t[0] === ST.tab)) ST.tab = tabs[0][0];
+        
+        a.innerHTML = (navigator.onLine ? '' : '<div class="off">Modo offline: agendamentos desativados até a conexão voltar.</div>') +
+                    '<div class="top"><div class="in"><div class="bar"><div style="display:flex;align-items:center;gap:10px"><img src="logo.png" alt="AgendaFácil" style="height:44px;width:auto;display:block;margin:6px 0"><span class="logo">AgendaFácil</span></div><span class="who">' + esc(me.n) + ' · ' + RL[me.r] + ' <button class="btn s g" onclick="A.inst()">App Android</button> <button class="btn s g" onclick="A.out()">Sair</button></span></div><nav>' + tabs.map(t => '<button class="' + (t[0] === ST.tab ? 'on' : '') + '" onclick="A.go(\'' + t[0] + '\')">' + t[1] + '</button>').join('') + '</nav></div></div>' +
+            '<main><div class="in">' + V[ST.tab]() + '</div></main>';
+        
+        save();
+    }
+
+    addEventListener('online', draw);
+    addEventListener('offline', draw);
+    draw();
+
+</script>
+</body>
+</html>
