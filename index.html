@@ -14,60 +14,60 @@
     <!-- Estilos (Cores e Layout) -->
     <style>
         :root {
-          /* Cores do Tema Claro (Chique, Neutro e Minimalista) */
-            --bg: #f8f9fa;    /* Cor de fundo: Branco gelo/off-white muito suave */
+            /* Cores do Tema Claro (Chique, Neutro e Minimalista) */
+            --bg: #f8f9fa;    /* Cor de fundo: Branco gelo/off-white */
             --sf: #ffffff;    /* Fundo dos cartões: Branco puro */
-            --ink: #111111;   /* Texto principal: Preto quase puro (muito elegante) */
+            --ink: #111111;   /* Texto principal: Preto quase puro */
             --mu: #6c757d;    /* Texto secundário: Cinza sofisticado */
-            --ln: #e5e5e5;    /* Linhas e bordas: Cinza claro e discreto */
-            --ac: #212529;    /* COR DE DESTAQUE: Preto carvão/chumbo para botões e menus */
-            --aci: #ffffff;   /* Cor do texto sobre o destaque: Branco */
-            --so: #f1f3f5;    /* Fundo de botões secundários: Cinza bem clarinho */
+            --ln: #e5e5e5;    /* Linhas e bordas: Cinza claro */
+            --ac: #212529;    /* Destaque: Preto carvão */
+            --aci: #ffffff;   /* Texto no destaque: Branco */
+            --so: #f1f3f5;    /* Botões secundários: Cinza bem claro */
             
-            /* Cores de Status (Mantidas limpas e discretas) */
+            /* Cores de Status */
             --ok: #2b8a3e;    /* Texto Sucesso (Verde sóbrio) */
-            --okb: #ebfbee;   /* Fundo Sucesso (Verde claro suave) */
+            --okb: #ebfbee;   /* Fundo Sucesso */
             --bad: #c92a2a;   /* Texto Cancelado (Vermelho sóbrio) */
-            --badb: #fff5f5;  /* Fundo Cancelado (Vermelho claro suave) */
-            --wa: #f53100;    /* Texto Agendado (Amarelo/Laranja elegante) */
-            --wab: #ffcfcf;   /* Fundo Agendado (Amarelo claro suave) */
+            --badb: #fff5f5;  /* Fundo Cancelado */
+            --wa: #d97706;    /* Texto Agendado (Âmbar/Laranja sóbrio) */
+            --wab: #fef3c7;   /* Fundo Agendado */
         }
 
-        /* Cores do Tema Escuro */
+        /* Cores do Tema Escuro (Chique e Grafite - Sem Roxo) */
         @media (prefers-color-scheme: dark) {
             :root:not([data-theme=light]) {
-                --bg: #1b0f20;
-                --sf: #2a1830;
-                --ink: #f6e9f4;
-                --mu: #bda9c4;
-                --ln: #44304b;
-                --ac: #e86aa6;
-                --aci: #2a1830;
-                --so: #3d2444;
-                --ok: #7fd1a8;
-                --okb: #1f3b2f;
-                --bad: #f09a97;
-                --badb: #472221;
-                --wa: #f3cf86;
-                --wab: #44351a;
+                --bg: #121212;    /* Fundo: Preto puro/grafite escuro */
+                --sf: #1e1e1e;    /* Cartões: Cinza escuro elegante */
+                --ink: #f8f9fa;   /* Texto principal: Off-white */
+                --mu: #a0a0a0;    /* Texto secundário: Cinza claro */
+                --ln: #2d2d2d;    /* Bordas: Cinza escuro discreto */
+                --ac: #ffffff;    /* Destaque: Branco */
+                --aci: #121212;   /* Texto no destaque: Preto */
+                --so: #2a2a2a;    /* Botões secundários: Grafite */
+                --ok: #81c784;
+                --okb: #1b2e1e;
+                --bad: #e57373;
+                --badb: #2e1b1b;
+                --wa: #ffb74d;
+                --wab: #2e2416;
             }
         }
 
         :root[data-theme=dark] {
-            --bg: #1b0f20;
-            --sf: #2a1830;
-            --ink: #f6e9f4;
-            --mu: #bda9c4;
-            --ln: #44304b;
-            --ac: #e86aa6;
-            --aci: #2a1830;
-            --so: #3d2444;
-            --ok: #7fd1a8;
-            --okb: #1f3b2f;
-            --bad: #f09a97;
-            --badb: #472221;
-            --wa: #f3cf86;
-            --wab: #44351a;
+            --bg: #121212;
+            --sf: #1e1e1e;
+            --ink: #f8f9fa;
+            --mu: #a0a0a0;
+            --ln: #2d2d2d;
+            --ac: #ffffff;
+            --aci: #121212;
+            --so: #2a2a2a;
+            --ok: #81c784;
+            --okb: #1b2e1e;
+            --bad: #e57373;
+            --badb: #2e1b1b;
+            --wa: #ffb74d;
+            --wab: #2e2416;
         }
 
         * { box-sizing: border-box; }
